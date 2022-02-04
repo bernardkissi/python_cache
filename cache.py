@@ -1,7 +1,9 @@
+import json
 from typing import Union, Any, Callable
 from redisClient import RedisClient
 from typing import Callable
 from datetime import timedelta
+from collections.abc import Iterable
 
 class Cache(object):
 
@@ -12,13 +14,15 @@ class Cache(object):
         # self.pub.psubscribe(**{'data-changed*':self.createBackup()})
         self.restoreFromBackup()
 
-    """ Implementing the read through cache aside strategy"""
+    # Implementing the read through cache aside strategy
     def get(self, key: str, callback:Callable[..., str], duration:'timedelta'=0) -> Union[Callable[[], str], Any]:
         if self.has(key):
             data = self.redis.get(key)
             return data
         if callable(callback):
             payload = callback()
+            if isinstance(payload, Iterable):
+                payload = json.dumps(payload)
             self.set(key, payload, duration)
             return payload
 
@@ -38,11 +42,11 @@ class Cache(object):
     def flush(self) -> None:
         self.redis.flushdb()
 
-    # def restoreFromBackup(self):
-    #     pass
+    def restoreFromBackup(self):
+        pass
+
+    """create a backup if data changes: """
+    def createBackup(self, payload):
+        print('we are creating backup')
     #
-    # """create a backup if data changes: """
-    # def createBackup(self, payload):
-    #     print('we are creating backup')
-    # #
 
