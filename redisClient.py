@@ -1,5 +1,4 @@
 import redis
-from itertools import zip_longest
 
 class Singleton(type):
     _instances = {}
