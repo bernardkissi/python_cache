@@ -10,7 +10,6 @@ class Cache(RedisClient):
     def __init__(self) -> None:
         RedisClient.__init__(self)
         self.cachedb = {}
-        # self.restoreBackUp()
 
     # Implementing the read through cache aside strategy
     def get(self, key: str, callback=None, duration: int = 0) -> Any:

@@ -1,7 +1,4 @@
-
-
 from redisCI.redisClient import RedisClient
-
 
 class Subscriber(RedisClient):
     def __init__(self):

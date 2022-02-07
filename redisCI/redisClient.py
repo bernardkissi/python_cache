@@ -7,6 +7,7 @@ import shutil
 import subprocess
 from datetime import datetime
 
+
 class AutoStartConnection(redis.Connection):
     # overrides redis.Connection.connect
     def connect(self):
@@ -21,6 +22,7 @@ class AutoStartConnection(redis.Connection):
             connect()
             print("Redis start successful.")
 
+
 class Singleton(type):
     _instances = {}
 
@@ -32,7 +34,7 @@ class Singleton(type):
 
 class RedisClient(metaclass=Singleton):
     backup_path = 'backups/'
-    # change value to suit your config # type 'config get dir' in the terminal
+    # change value to suit your path # type 'config get dir' in the terminal
     redis_dump_path = '/usr/local/var/db/redis/'
 
     def __init__(self, host: str = 'localhost', port: int = 6379):
@@ -63,7 +65,6 @@ class RedisClient(metaclass=Singleton):
     #     latest_backup = self.__latestBackup()
     #     self.copyToRedisDir(config_dir, directory['dir'], latest_backup)
 
-
     def getConfigDir(self):
         d = self.client.config_get('dir')
         dbfilename = self.client.config_get('dbfilename')
@@ -75,7 +76,7 @@ class RedisClient(metaclass=Singleton):
         return latest_file
 
     @staticmethod
-    def copyToDir(rdbFile: str, directory: str, filename: str,):
+    def copyToDir(rdbFile: str, directory: str, filename: str, ):
         if not os.path.exists(directory):
             os.makedirs(directory)
         elif not os.path.isdir(directory):
