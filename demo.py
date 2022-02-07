@@ -5,7 +5,7 @@ from redisCI.subscriber import Subscriber
 
 ##############################################
 # CACHE FUNCTIONS (SET & GET DATA INTO CACHE)
-
+print('************************ GET AND SET METHODS OF CACHE *********************')
 cache: Cache = Cache()
 
 # ADDING DATA TO CACHE
@@ -43,17 +43,19 @@ print("User fetched from cache", user1)
 ##############################################
 # PUB/SUB TO UPDATE CACHE ON CHANGES AND MANAGE BACKUPS
 # updates can be new resource added or item updated
+print('***************** REDIS PUB>SUB - CREATING BACKUPS ***********')
 subscriber = Subscriber()
 publisher = Publisher()
 
 publisher.writeMessage({'name': 'ice-cream', 'price': 400})
 payload = subscriber.getMessage()
-print('payload published data',payload)
+print('Payload published data: ', payload)
 # scenario new item added to the local database
 if payload is not None:
     cache.set('Product:3', payload['data'], 60)
 print(cache.get('Product:3'))
 
-# scenario 1:  when cache key exist
+print('************************RESTORING BACKUPS *********************')
+# scenario 1:  restored cache
 product2 = cache.get('Product:3')
 print("Product fetched from cache restored", product2)
