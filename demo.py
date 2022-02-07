@@ -42,14 +42,18 @@ print("User fetched from cache", user1)
 
 ##############################################
 # PUB/SUB TO UPDATE CACHE ON CHANGES AND MANAGE BACKUPS
-
+# updates can be new resource added or item updated
 subscriber = Subscriber()
 publisher = Publisher()
 
-publisher.writeMessage({'name': "something new"})
+publisher.writeMessage({'name': 'ice-cream', 'price': 400})
 payload = subscriber.getMessage()
+print('payload published data',payload)
+# scenario new item added to the local database
+if payload is not None:
+    cache.set('Product:3', payload['data'], 60)
+print(cache.get('Product:3'))
 
-print(payload)
 # scenario 1:  when cache key exist
-product2 = cache.get('Product:2')
+product2 = cache.get('Product:3')
 print("Product fetched from cache restored", product2)

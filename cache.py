@@ -1,3 +1,4 @@
+import sys
 from typing import Union, Any, Dict
 from redisCI.redisClient import RedisClient
 from datetime import timedelta
@@ -13,23 +14,18 @@ class Cache(RedisClient):
 
     # Implementing the read through cache aside strategy
     def get(self, key: str, callback=None, duration: int = 0) -> Any:
-        if callback is None:
-            callback = {}
         if self.has(key):
             data = self.client.get(key)
             return data
         if callable(callback):
             payload = callback()
-            if isinstance(payload, Iterable):
-                payload = json.dumps(payload)
-            self.set(key, payload, duration)
+            self.set(key, self.__encode(payload), duration)
             return payload
 
     # Implementing the write function
-    def set(self, key: str, data: Any, expiry: int = 0) -> None:
-        if isinstance(data, Iterable):
-            data = json.dumps(data)
-        self.client.set(key, data, ex=timedelta(seconds=expiry))
+    def set(self, key: str, data: Any, expiry: int = 0):
+        if data is not None:
+            self.client.set(key, self.__encode(data), ex=timedelta(seconds=expiry))
 
     # Checks if the key passed exist in redis
     def has(self, key: str) -> bool:
@@ -54,9 +50,9 @@ class Cache(RedisClient):
             self.cachedb.update(dict(zip(keys, values)))
         return self.cachedb
 
-    #  Simulating pre-heating cache with backup data
-    def preHeatCacheFromBackup(self):
-        # self.flush()
-        pass
-
-
+    def __encode(self, payload):
+        if isinstance(payload, (dict, list, tuple, set)):
+            return json.dumps(payload)
+        elif isinstance(payload, bytes):
+            return str(payload, encoding='utf-8')
+        return payload

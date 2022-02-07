@@ -46,6 +46,7 @@ class RedisClient(metaclass=Singleton):
         self.client.config_set('dir', self.redis_dump_path)
 
     def createBackup(self):
+        print('started generating backup ....')
         config_dir = self.getConfigDir()
         print(config_dir)
         backup_filename = '%s/%s_%s_port_%d.rdb' % (self.backup_path, datetime.now(), 'dump', self.__port)
