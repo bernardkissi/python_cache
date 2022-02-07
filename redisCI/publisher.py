@@ -10,4 +10,4 @@ class Publisher(RedisClient):
         RedisClient.__init__(self)
 
     def writeMessage(self, message: Any = 'the message is passed'):
-        self.client.publish('broadcast-updates2', json.dumps(message))
+        self.client.publish('broadcast', json.dumps(message))

@@ -1,41 +1,55 @@
-from redisCI.redisClient import RedisClient
-from cache import Cache
 import json
-from datetime import timedelta
+from cache import Cache
+from redisCI.publisher import Publisher
+from redisCI.subscriber import Subscriber
 
-x= {"name":"bernard"}
+##############################################
+# CACHE FUNCTIONS (SET & GET DATA INTO CACHE)
 
-#callback simulation data fetching from db
-def save():
-    data = json.dumps(x)
-    with open('data.json', 'w') as f:
-        f.write(data)
-    return data
+cache: Cache = Cache()
 
+# ADDING DATA TO CACHE
+cache.set('Product:2', {"name": "sneakers", "price": 200}, 30)
 #
-#
-# #instantiating Cache class and calling the get and set
-cache = Cache()
-data = cache.get('testing02', save, timedelta(seconds=30) )
-# results = cache.set('testing03', 'hello', timedelta(seconds=30) )
-# # backup = cache.createBackup()
-#
-# #accessing values directly from the redis store
-# redis1 = RedisClient().client.get('testing02')
-# redis2 = RedisClient().client.get('testing03')
-# redisStore = RedisClient().data
+cacheData = cache.getAll()
+print(cacheData)
 
-redis = RedisClient().client
-pub = RedisClient().pub
-redis.publish('data-changed1', 'poiiopip')
-subscriber = RedisClient().subscriber
-message = pub.get_message()
-print('pub/sub')
+# RETRIEVING FROM CACHE
+# scenario 1:  when cache key exist
+product1 = cache.get('Product:2')
+print("Product fetched from cache", product1)
 
-#displaying the results of cache data
-# print(data)
-# print(redis1)
-# print(redis2)
-print('something from backup')
-# print(redisStore)
-print(message)
+# scenario 2: when cache key does not exist we make a call to db
+# to fetch and store to cache
+def fetchFromDB():
+    with open('database.json') as db:
+        data = db.read()
+        results = json.loads(data)
+        return results
+
+# # callback is passed to the get method and the duration is set when callback data is set in cache
+user1 = cache.get('User:1', fetchFromDB, 30)
+print("User fetched from cache", user1)
+
+###############################################
+# CACHE BACKUP AND PREHEAT CACHE
+# scenario : Assuming product1 changes locally based on product update
+# 1. We update the cache 2
+# 2. based on the ttl set we backup data
+# cache.preHeatCacheFromBackup()
+    # 2a. fetch all the data and we push into a json file as cache backup
+    # 3a. we fetch everything from the backup and flush cache and set with db from backup
+
+##############################################
+# PUB/SUB TO UPDATE CACHE ON CHANGES AND MANAGE BACKUPS
+
+subscriber = Subscriber()
+publisher = Publisher()
+
+publisher.writeMessage({'name': "something new"})
+payload = subscriber.getMessage()
+
+print(payload)
+# scenario 1:  when cache key exist
+product2 = cache.get('Product:2')
+print("Product fetched from cache restored", product2)

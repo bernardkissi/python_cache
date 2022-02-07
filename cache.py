@@ -1,6 +1,5 @@
-from typing import Union, Any
+from typing import Union, Any, Dict
 from redisCI.redisClient import RedisClient
-from typing import Callable
 from datetime import timedelta
 from collections.abc import Iterable
 import json
@@ -10,10 +9,13 @@ class Cache(RedisClient):
 
     def __init__(self) -> None:
         RedisClient.__init__(self)
-        self.restoreFromBackup()
+        self.cachedb = {}
+        # self.restoreBackUp()
 
     # Implementing the read through cache aside strategy
-    def get(self, key: str, callback: Callable[..., str], duration: 'timedelta' = 0) -> Union[Callable[[], str], Any]:
+    def get(self, key: str, callback=None, duration: int = 0) -> Any:
+        if callback is None:
+            callback = {}
         if self.has(key):
             data = self.client.get(key)
             return data
@@ -25,8 +27,10 @@ class Cache(RedisClient):
             return payload
 
     # Implementing the write function
-    def set(self, key: str, data: Any, duration: 'timedelta' = 0) -> None:
-        self.client.set(key, data, ex=duration)
+    def set(self, key: str, data: Any, expiry: int = 0) -> None:
+        if isinstance(data, Iterable):
+            data = json.dumps(data)
+        self.client.set(key, data, ex=timedelta(seconds=expiry))
 
     # Checks if the key passed exist in redis
     def has(self, key: str) -> bool:
@@ -41,14 +45,19 @@ class Cache(RedisClient):
         self.client.flushdb()
 
     # fetch all data in the redis cache
-    # def __getAll(self) -> None:
-    #     keys = self.redis.keys('*')
-    #     values = self.redis.mget(*keys)
-    #     values = map(str, values)
-    #     self.redisCls.data.update(dict(zip(keys, values)))
+    def getAll(self) -> dict:
+        keys = self.client.keys('*')
+        if not keys:
+            return "cache is empty"
+        else:
+            values = self.client.mget(*keys)
+            values = map(str, values)
+            self.cachedb.update(dict(zip(keys, values)))
+        return self.cachedb
 
-    # # simulating restoration from external drive
-    def restoreFromBackup(self):
-        with open('data.json') as f:
-            data = f.read()
-            print(data)
+    #  Simulating pre-heating cache with backup data
+    def preHeatCacheFromBackup(self):
+        # self.flush()
+        pass
+
+
