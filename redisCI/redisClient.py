@@ -62,9 +62,7 @@ class RedisClient(metaclass=Singleton):
     #     # # COPY BACKUP TO REDIS DIR
     #     latest_backup = self.__latestBackup()
     #     self.copyToRedisDir(config_dir, directory['dir'], latest_backup)
-    #     print(directory['dir'])
-    #     print(config_dir)
-    #     print(latest_backup)
+
 
     def getConfigDir(self):
         d = self.client.config_get('dir')

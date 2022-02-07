@@ -6,7 +6,7 @@ Simple implementation of Cache system
 
 ``2.Set: set data into the redis cache``
 
-# CACHE FUNCTIONS (SET & GET DATA INTO CACHE)
+### CACHE FUNCTIONS (SET & GET DATA INTO CACHE)
 
 To use the cache class  
 ```
@@ -34,7 +34,8 @@ print("Product fetched from cache", product1)
 ```
 
 #### scenario 2: when cache key does not exist we make a call to DB/API
-```def fetchFromDB():
+```
+def fetchFromDB():
     with open('database.json') as db:
         data = db.read()
         results = json.loads(data)
