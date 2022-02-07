@@ -17,7 +17,7 @@ print(cacheData)
 # RETRIEVING FROM CACHE
 # scenario 1:  when cache key exist
 product1 = cache.get('Product:2')
-print("Product fetched from cache", product1)
+print("Product fetched from cache: ", product1)
 
 # scenario 2: when cache key does not exist we make a call to db
 # to fetch and store to cache
@@ -29,7 +29,7 @@ def fetchFromDB():
 
 # # callback is passed to the get method and the duration is set when callback data is set in cache
 user1 = cache.get('User:1', fetchFromDB, 30)
-print("User fetched from cache", user1)
+print("User fetched from cache: ", user1)
 
 ###############################################
 # CACHE BACKUP AND PREHEAT CACHE
@@ -58,4 +58,4 @@ print(cache.get('Product:3'))
 print('************************RESTORING BACKUPS *********************')
 # scenario 1:  restored cache
 product2 = cache.get('Product:3')
-print("Product fetched from cache restored", product2)
+print("Product fetched from cache restored: ", product2)
