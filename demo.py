@@ -12,7 +12,7 @@ cache: Cache = Cache()
 cache.set('Product:2', {"name": "sneakers", "price": 200}, 30)
 #
 cacheData = cache.getAll()
-print(cacheData)
+print("Get all the product:", cacheData)
 
 # RETRIEVING FROM CACHE
 # scenario 1:  when cache key exist
@@ -55,7 +55,7 @@ if payload is not None:
     cache.set('Product:3', payload['data'], 60)
 print(cache.get('Product:3'))
 
-print('************************RESTORING BACKUPS *********************')
+print('*********************** RESTORING BACKUPS *********************')
 # scenario 1:  restored cache
 product2 = cache.get('Product:3')
 print("Product fetched from cache restored: ", product2)

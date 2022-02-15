@@ -1,8 +1,6 @@
-import sys
-from typing import Union, Any, Dict
+from typing import Any, Union
 from redisCI.redisClient import RedisClient
 from datetime import timedelta
-from collections.abc import Iterable
 import json
 
 
@@ -40,7 +38,7 @@ class Cache(RedisClient):
         self.client.flushdb()
 
     # fetch all data in the redis cache
-    def getAll(self) -> dict:
+    def getAll(self) -> Union['dict', str]:
         keys = self.client.keys('*')
         if not keys:
             return "cache is empty"
@@ -50,7 +48,8 @@ class Cache(RedisClient):
             self.cachedb.update(dict(zip(keys, values)))
         return self.cachedb
 
-    def __encode(self, payload):
+    @staticmethod
+    def __encode(payload):
         if isinstance(payload, (dict, list, tuple, set)):
             return json.dumps(payload)
         elif isinstance(payload, bytes):
