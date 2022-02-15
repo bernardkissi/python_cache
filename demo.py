@@ -19,6 +19,7 @@ print("Get all the product:", cacheData)
 product1 = cache.get('Product:2')
 print("Product fetched from cache: ", product1)
 
+
 # scenario 2: when cache key does not exist we make a call to db
 # to fetch and store to cache
 def fetchFromDB():
@@ -26,6 +27,7 @@ def fetchFromDB():
         data = db.read()
         results = json.loads(data)
         return results
+
 
 # # callback is passed to the get method and the duration is set when callback data is set in cache
 user1 = cache.get('User:1', fetchFromDB, 30)
@@ -35,10 +37,10 @@ print("User fetched from cache: ", user1)
 # CACHE BACKUP AND PREHEAT CACHE
 # scenario : Assuming product1 changes locally based on product update
 # 1. We update the cache 2
-# 2. based on the ttl set we backup data
+# 2. based on the ttl set we back up data
 # cache.preHeatCacheFromBackup()
-    # 2a. fetch all the data and we push into a json file as cache backup
-    # 3a. we fetch everything from the backup and flush cache and set with db from backup
+# 2a. fetch all the data, and we push into a json file as cache backup
+# 3a. we fetch everything from the backup and flush cache and set with db from backup
 
 ##############################################
 # PUB/SUB TO UPDATE CACHE ON CHANGES AND MANAGE BACKUPS
